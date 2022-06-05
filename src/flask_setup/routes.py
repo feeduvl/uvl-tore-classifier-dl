@@ -27,7 +27,7 @@ def classify_tore():
     return 'OK'
 
 
-@app.route('/hitec/classify/concepts/bi-lstm/status', methods=["GET"])
+@app.route('/hitec/classify/concepts/deep-ner/status', methods=["GET"])
 def get_status():
     status = {
         "status": "operational",
