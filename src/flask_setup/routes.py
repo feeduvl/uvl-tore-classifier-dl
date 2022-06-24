@@ -15,14 +15,14 @@ def classify_tore():
     timestamp = '{:%Y-%m-%d_%H%M%S-%f}'.format(datetime.datetime.now())
 
     content = json.loads(request.data.decode('utf-8'))
-    app.logger.info(content)
+    # app.logger.info(content)
 
     dataset = content["dataset"]["documents"]
 
     # Send request to get selected annotation
     # Ths should be a parameter when running algorithm
 
-    app.logger.info(dataset)
+    # app.logger.info(dataset)
 
     return 'OK'
 
