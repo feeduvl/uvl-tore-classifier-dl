@@ -1,4 +1,5 @@
 import json
+import os
 import re
 
 import nltk
@@ -73,6 +74,15 @@ def normalizeSentences(sentences_not_normalized):
         all_sent_normalized.append(sent_normalized)
     return all_sent_normalized
 
+def saveSentencesToFile(path, file, normlized_sentences):
+    if os.path.isfile(path) and os.access(path, os.R_OK):
+        # checks if file exists
+        print("File exists and is readable")
+    else:
+        print("Either file is missing or is not readable, creating file...")
+        with open(os.path.join(path, file), 'w') as fout:
+            json.dump(normlized_sentences, fout)
+
 
 if __name__ == "__main__":
 
@@ -84,10 +94,16 @@ if __name__ == "__main__":
     # Construct feature vectors from tokens and codes, and sort them by document
     feature_vectors = constructFeatureVector()
     docs = constructDocuments(feature_vectors)
+    counter = 0
 
     for doc in docs:
         sentences = getSentencesForDocument(doc)
         sentences_normalized = normalizeSentences(sentences)
 
+        PATH = "../data/documents"
+        FILENAME = "doc" + str(counter) + ".json"
+
+        saveSentencesToFile(PATH, FILENAME, sentences_normalized)
+        counter += 1
 
 
