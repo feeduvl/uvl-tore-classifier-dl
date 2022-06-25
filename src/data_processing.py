@@ -1,9 +1,11 @@
 import json
-import os
 import re
 
 import nltk
 from nltk.corpus import stopwords
+
+from src.io_utils import saveContentToFile
+
 nltk.download('stopwords')
 
 
@@ -12,6 +14,7 @@ def getLemmaOfTokensWAndInitilizeCodes(list_of_tokens):
     for i in range(len(list_of_tokens)):
         token_with_code = {
             "lemma": list_of_tokens[i]["lemma"],
+            "index": list_of_tokens[i]["index"],
             "tag": None
         }
         tokens_with_code.append(token_with_code)
@@ -75,16 +78,6 @@ def normalizeSentences(sentences_not_normalized):
     return all_sent_normalized
 
 
-def saveSentencesToFile(path, file, normalized_sentences):
-    if os.path.isfile(path) and os.access(path, os.R_OK):
-        # checks if file exists
-        print("File exists and is readable")
-    else:
-        print("Either file is missing or is not readable, creating file...")
-        with open(os.path.join(path, file), 'w') as fout:
-            json.dump(normalized_sentences, fout)
-
-
 if __name__ == "__main__":
 
     f = open("../data/anno.json")
@@ -107,4 +100,4 @@ if __name__ == "__main__":
     PATH = "../data"
     FILENAME = "sentences.json"
 
-    saveSentencesToFile(PATH, FILENAME, all_normalized_sentences)
+    saveContentToFile(PATH, FILENAME, all_normalized_sentences)
