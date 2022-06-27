@@ -17,6 +17,7 @@ def getToreDict():
         tore_dict[tores[i]] = i + 1
     return tore_dict
 
+
 def getTrainingSets(anno_data, tore_dict):
     x_training = []
     y_training = []
@@ -32,9 +33,22 @@ def getTrainingSets(anno_data, tore_dict):
     return x_training, y_training
 
 
-def mapTagToCorrectSize(y_training, len_sentence):
+def mapFeatureToCorrectSize(x_train, len_sentence):
+    x_train_filled = []
+    for sentence in x_train:
+        filler = []
+        for i in range(len_sentence):
+            if len(sentence) > i:
+                filler.append(sentence[i])
+            else:
+                filler.append("")
+        x_train_filled.append(filler)
+    return x_train_filled
+
+
+def mapTagToCorrectSize(y_train, len_sentence):
     y_train_filled = []
-    for tags in y_training:
+    for tags in y_train:
         correct_length = np.zeros(len_sentence, dtype=np.int8)
         correct_length.fill(0)
         for i in range(len(tags)):
@@ -43,43 +57,51 @@ def mapTagToCorrectSize(y_training, len_sentence):
     return y_train_filled
 
 
-def getWordEmbeddings(anno_data, tore_dict):
-    x_train, y_train = getTrainingSets(anno_data, tore_dict)
-
-    embedding_dimension = 100
-    length_of_sentence = 80
-
-    y_train = mapTagToCorrectSize(y_train, length_of_sentence)
-    path = "../data"
-    filename = "y_train.json"
-
-    saveContentToFile(path, filename, y_train)
+def saveWordEmbeddings(x_train, emb_dim, len_sentence):
+    # 100 refers to dimensionality of the vector, 100 comes closest to 128 dimensions in paper
+    model_glove_twitter = api.load("glove-twitter-100")
 
     sentence_matrix = []
     for sentence in x_train:
-        gensim_weight_matrix = np.zeros((length_of_sentence, embedding_dimension))
+        gensim_weight_matrix = np.zeros((len_sentence, emb_dim))
         for i in range(len(sentence)):
             if sentence[i] in model_glove_twitter:
                 gensim_weight_matrix[i] = model_glove_twitter[sentence[i]]
             else:
-                gensim_weight_matrix[i] = np.zeros(embedding_dimension)
+                gensim_weight_matrix[i] = np.zeros(emb_dim)
         gensim_list = gensim_weight_matrix.tolist()
         sentence_matrix.append(gensim_list)
-    return sentence_matrix
+
+    PATH = "../data"
+    FILENAME = "embeddings.json"
+
+    saveContentToFile(PATH, FILENAME, sentence_matrix)
+
+
+def getFeatureVectorsAndSave(anno_data, tore_dict, len_sentence):
+    x_train, y_train = getTrainingSets(anno_data, tore_dict)
+
+    x_train = mapFeatureToCorrectSize(x_train, len_sentence)
+    y_train = mapTagToCorrectSize(y_train, len_sentence)
+    path = "../data"
+    filename1 = "features.json"
+    filename2 = "tags.json"
+
+    saveContentToFile(path, filename1, x_train)
+    saveContentToFile(path, filename2, y_train)
+    return x_train, y_train
+
 
 if __name__ == "__main__":
-
-    # 100 refers to dimensionality of the vector, 100 comes closest to 128 dimensions in paper
-    model_glove_twitter = api.load("glove-twitter-100")
 
     f = open("../data/sentences.json")
     my_anno_data = json.load(f)
     tore_dictionary = getToreDict()
 
-    embeddings_for_sentences = getWordEmbeddings(my_anno_data, tore_dictionary)
+    EMB_DIM = 100
+    LEN_SENTENCE = 80
 
-    PATH = "../data"
-    FILENAME = "embeddings.json"
+    x_training, y_training = getFeatureVectorsAndSave(my_anno_data, tore_dictionary, LEN_SENTENCE)
+    saveWordEmbeddings(x_training, EMB_DIM, LEN_SENTENCE)
 
-    saveContentToFile(PATH, FILENAME, embeddings_for_sentences)
 
