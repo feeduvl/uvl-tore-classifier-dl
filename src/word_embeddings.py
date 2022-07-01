@@ -6,8 +6,8 @@ import numpy as np
 from src.io_utils import saveContentToFile
 
 
-def getToreDict():
-    f = open("../data/tore.json")
+def getToreDict(path):
+    f = open(path + "/tore.json")
     tore = json.load(f)
     tores = tore["tores"]
     tores.append(None)
@@ -57,7 +57,7 @@ def mapTagToCorrectSize(y_train, len_sentence):
     return y_train_filled
 
 
-def saveWordEmbeddings(x_train, emb_dim, len_sentence):
+def saveWordEmbeddings(x_train, emb_dim, len_sentence, path):
     # 100 refers to dimensionality of the vector, 100 comes closest to 128 dimensions in paper
     model_glove_twitter = api.load("glove-twitter-100")
 
@@ -72,18 +72,16 @@ def saveWordEmbeddings(x_train, emb_dim, len_sentence):
         gensim_list = gensim_weight_matrix.tolist()
         sentence_matrix.append(gensim_list)
 
-    PATH = "../data"
     FILENAME = "embeddings.json"
 
     saveContentToFile(PATH, FILENAME, sentence_matrix)
 
 
-def getFeatureVectorsAndSave(anno_data, tore_dict, len_sentence):
+def getFeatureVectorsAndSave(anno_data, tore_dict, len_sentence, path):
     x_train, y_train = getTrainingSets(anno_data, tore_dict)
 
     x_train = mapFeatureToCorrectSize(x_train, len_sentence)
     y_train = mapTagToCorrectSize(y_train, len_sentence)
-    path = "../data"
     filename1 = "features.json"
     filename2 = "tags.json"
 
@@ -94,14 +92,16 @@ def getFeatureVectorsAndSave(anno_data, tore_dict, len_sentence):
 
 if __name__ == "__main__":
 
-    f = open("../data/sentences.json")
+    PATH = "../data"
+    # PATH = "../data/test"
+    f = open(PATH + "/sentences.json")
     my_anno_data = json.load(f)
-    tore_dictionary = getToreDict()
+    tore_dictionary = getToreDict(PATH)
 
     EMB_DIM = 100
-    LEN_SENTENCE = 80
+    LEN_SENTENCE = 60
 
-    x_training, y_training = getFeatureVectorsAndSave(my_anno_data, tore_dictionary, LEN_SENTENCE)
-    saveWordEmbeddings(x_training, EMB_DIM, LEN_SENTENCE)
+    x_training, y_training = getFeatureVectorsAndSave(my_anno_data, tore_dictionary, LEN_SENTENCE, PATH)
+    saveWordEmbeddings(x_training, EMB_DIM, LEN_SENTENCE, PATH)
 
 

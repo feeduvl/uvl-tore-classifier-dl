@@ -80,8 +80,12 @@ def normalizeSentences(sentences_not_normalized):
 
 if __name__ == "__main__":
 
-    f = open("../data/anno.json")
+    PATH = "../data"
+    # PATH = "../data/test"
+    FILENAME = "sentences.json"
+    f = open(PATH + "/anno.json")
     my_anno_data = json.load(f)
+    print(len(my_anno_data["codes"]))
 
     all_docs = my_anno_data["docs"]
 
@@ -97,7 +101,6 @@ if __name__ == "__main__":
         for norm_sentence in sentences_normalized:
             all_normalized_sentences.append(norm_sentence)
 
-    PATH = "../data"
-    FILENAME = "sentences.json"
+    print(len(all_normalized_sentences))
 
-    saveContentToFile(PATH, FILENAME, all_normalized_sentences)
+    # saveContentToFile(PATH, FILENAME, all_normalized_sentences)
