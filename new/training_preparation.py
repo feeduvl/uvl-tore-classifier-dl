@@ -26,6 +26,8 @@ def constructAndSaveWordAndTagMaps(words, tags):
 
     saveContentToFile("../data/generated", "word2idx.json", word2idx)
     saveContentToFile("../data/generated", "tag2idx.json", tag2idx)
+    saveContentToFile("../data/generated", "words.json", words)
+    saveContentToFile("../data/generated", "tags.json", tags)
     return word2idx, tag2idx
 
 def getWordsAndTags(dataset):
@@ -37,7 +39,7 @@ def getWordsAndTags(dataset):
 
 
 def getXAndy(word2idx, tag2idx, sentences, n_words, n_tags, sentence_length):
-    X = [[word2idx[w[0]] for w in s] for s in sentences]
+    X = [[(word2idx[w[0]] if (w[0] in word2idx) else word2idx["ENDPAD"]) for w in s] for s in sentences]
     X = pad_sequences(maxlen=sentence_length, sequences=X, padding="post", value=n_words - 1)
     y = [[tag2idx[w[1]] for w in s] for s in sentences]
     y = pad_sequences(maxlen=sentence_length, sequences=y, padding="post", value=tag2idx["_"])

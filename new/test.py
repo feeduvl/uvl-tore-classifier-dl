@@ -1,14 +1,13 @@
 import json
 
-import pandas as pd
 import numpy as np
-from keras.preprocessing.sequence import pad_sequences
-from keras.utils import to_categorical
+from sklearn import metrics
 
 import tensorflow as tf
 
 from new.SentenceGetter import SentenceGetter
 from new.dataprocess import buildDataset
+from new.training_preparation import getWordsAndTags, getXAndy
 
 if __name__ == "__main__":
     PATH = "../data/test"
@@ -21,31 +20,33 @@ if __name__ == "__main__":
     sentences = getter.sentences
     print("Number of sentences: ", len(sentences))
 
-    maxlen = max([len(s) for s in sentences])
-    print('Maximum sequence length:', maxlen)
+    # maxlen = max([len(s) for s in sentences])
+    # print('Maximum sequence length:', maxlen)
 
-    words = list(set(dataset["word"].values))
-    words.append("ENDPAD")
+    f = open("../data/generated/words.json")
+    words = json.load(f)
+    f = open("../data/generated/tags.json")
+    tags = json.load(f)
+
     n_words = len(words)
-    print("Number of words: ", n_words)
-    tags = list(set(dataset["tag"].values))
     n_tags = len(tags)
-    print("Number of tags: ", n_tags)
 
-    word2idx = {w: i for i, w in enumerate(words)}
-    tag2idx = {t: i for i, t in enumerate(tags)}
+    f = open("../data/generated/word2idx.json")
+    word2idx = json.load(f)
+    f = open("../data/generated/tag2idx.json")
+    tag2idx = json.load(f)
+    X_test, y_test = getXAndy(word2idx, tag2idx, sentences, n_words, n_tags, SENTENCE_LENGTH)
 
-    X_test = [[word2idx[w[0]] for w in s] for s in sentences]
-    X_test = pad_sequences(maxlen=SENTENCE_LENGTH, sequences=X_test, padding="post", value=n_words - 1)
-    y_test = [[tag2idx[w[1]] for w in s] for s in sentences]
-    y_test = pad_sequences(maxlen=SENTENCE_LENGTH, sequences=y_test, padding="post", value=tag2idx["None"])
-    y_test = [to_categorical(i, num_classes=n_tags) for i in y_test]
 
-    model = tf.keras.models.load_model('../model/my_model5.h5')
+    model = tf.keras.models.load_model('../new_model/40/model05_3e.h5')
 
     i = 0
     p = model.predict(np.array([X_test[i]]))
     p = np.argmax(p, axis=-1)
+    y_true = np.argmax(y_test[i], axis=-1)
+    print(p)
+    print(y_true)
     print("{:14} ({:5}): {}".format("Word", "True", "Pred"))
-    for w, pred in zip(X_test[i], p[0]):
-        print("{:14}: {}".format(words[w], tags[pred]))
+    for w, t, pred in zip(X_test[i], y_true, p[0]):
+        print("{:14}: {}, {}".format(words[w], tags[t], tags[pred]))
+
