@@ -4,8 +4,9 @@ class SentenceGetter(object):
         self.n_sent = 1
         self.dataset = dataset
         self.empty = False
-        agg_func = lambda s: [(w, t) for w, t in zip(s["word"].values.tolist(),
-                                                     s["tag"].values.tolist())]
+        agg_func = lambda s: [(w, t, i) for w, t, i in zip(s["word"].values.tolist(),
+                                                           s["tag"].values.tolist(),
+                                                           s["index"])]
         self.grouped = self.dataset.groupby("sentence_idx").apply(agg_func)
         self.sentences = [s for s in self.grouped]
 

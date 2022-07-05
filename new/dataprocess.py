@@ -77,7 +77,9 @@ def buildDataset(data):
     all_docs = data["docs"]
 
     feature_vectors = constructFeatureVector(data)
+    # In between documents there might not be punctuation, so this is done manually
     docs = constructDocuments(feature_vectors, all_docs)
+    # Sentences are not only separated by normal sentence separators, but also by '###'
     ds = getSentencesForDocument(docs)
 
     return pd.DataFrame(ds)

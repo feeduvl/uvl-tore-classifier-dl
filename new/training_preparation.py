@@ -1,10 +1,15 @@
+import json
+
 from tensorflow.keras.layers import LSTM, Embedding, Dense, TimeDistributed, Dropout, Bidirectional
 from tensorflow.python.keras import Model, Input
 
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
 
+import gensim.downloader as api
+
 from new.io_utils import saveContentToFile
+import numpy as np
 
 
 def constructModel(n_words, n_tags, sentence_length):
@@ -20,28 +25,38 @@ def constructModel(n_words, n_tags, sentence_length):
 
     return Model(input, out)
 
-def constructAndSaveWordAndTagMaps(words, tags):
-    word2idx = {w: i for i, w in enumerate(words)}
+def constructAndSaveTagMap(tags):
     tag2idx = {t: i for i, t in enumerate(tags)}
 
-    saveContentToFile("../data/generated", "word2idx.json", word2idx)
     saveContentToFile("../data/generated", "tag2idx.json", tag2idx)
-    saveContentToFile("../data/generated", "words.json", words)
     saveContentToFile("../data/generated", "tags.json", tags)
-    return word2idx, tag2idx
+    return tag2idx
 
-def getWordsAndTags(dataset):
-    words = list(set(dataset["word"].values))
-    words.append("ENDPAD")
+def getTags(dataset):
     tags = list(set(dataset["tag"].values))
     tags.append("_")
-    return words, tags
+    return tags
 
 
-def getXAndy(word2idx, tag2idx, sentences, n_words, n_tags, sentence_length):
-    X = [[(word2idx[w[0]] if (w[0] in word2idx) else word2idx["ENDPAD"]) for w in s] for s in sentences]
-    X = pad_sequences(maxlen=sentence_length, sequences=X, padding="post", value=n_words - 1)
+def pad_or_truncate(some_list, target_len):
+    return some_list[:target_len] + [np.zeros(3).tolist()]*(target_len - len(some_list))
+
+
+def getWordEmbeddings(sentences, max_len):
+    model_glove_twitter = api.load("glove-twitter-100")
+    X = [[(model_glove_twitter[w[0]].tolist() if (w[0] in model_glove_twitter) else np.zeros(100).tolist()) for w in s] for s in sentences]
+    X = [pad_or_truncate(s, max_len) for s in sentences]
+    saveContentToFile("../data/generated", "embeddings.json", X)
+
+
+def loadWordEmbedding():
+    f = open("../data/generated" + "/embeddings.json")
+    return json.load(f)
+
+
+
+def getXAndy(tag2idx, sentences, n_tags, sentence_length):
     y = [[tag2idx[w[1]] for w in s] for s in sentences]
     y = pad_sequences(maxlen=sentence_length, sequences=y, padding="post", value=tag2idx["_"])
     y = [to_categorical(i, num_classes=n_tags) for i in y]
-    return X, y
+    return y
