@@ -7,11 +7,12 @@ import tensorflow as tf
 
 from new.SentenceGetter import SentenceGetter
 from new.dataprocess import buildDataset
-from new.training_preparation import getWordsAndTags, getXAndy
+from new.training_preparation import getXAndy, getWordEmbeddings, loadWordEmbedding
 
+# TODO: Rework!!
 if __name__ == "__main__":
     PATH = "../data/test"
-    SENTENCE_LENGTH = 40
+    SENTENCE_LENGTH = 60
     f = open(PATH + "/anno.json")
     data = json.load(f)
 
@@ -20,33 +21,31 @@ if __name__ == "__main__":
     sentences = getter.sentences
     print("Number of sentences: ", len(sentences))
 
-    # maxlen = max([len(s) for s in sentences])
-    # print('Maximum sequence length:', maxlen)
-
-    f = open("../data/generated/words.json")
-    words = json.load(f)
     f = open("../data/generated/tags.json")
     tags = json.load(f)
-
-    n_words = len(words)
     n_tags = len(tags)
 
-    f = open("../data/generated/word2idx.json")
-    word2idx = json.load(f)
     f = open("../data/generated/tag2idx.json")
     tag2idx = json.load(f)
-    X_test, y_test = getXAndy(word2idx, tag2idx, sentences, n_words, n_tags, SENTENCE_LENGTH)
+    y_test = getXAndy(tag2idx, sentences, n_tags, SENTENCE_LENGTH)
+    # X_test = getWordEmbeddings(sentences, SENTENCE_LENGTH, True)
+    X_test = loadWordEmbedding()
 
+    model = tf.keras.models.load_model('../emb_model/60/model02_25e.h5')
 
-    model = tf.keras.models.load_model('../new_model/40/model05_3e.h5')
-
-    i = 0
-    p = model.predict(np.array([X_test[i]]))
-    p = np.argmax(p, axis=-1)
-    y_true = np.argmax(y_test[i], axis=-1)
-    print(p)
-    print(y_true)
-    print("{:14} ({:5}): {}".format("Word", "True", "Pred"))
-    for w, t, pred in zip(X_test[i], y_true, p[0]):
-        print("{:14}: {}, {}".format(words[w], tags[t], tags[pred]))
+    for i in range(len(X_test)):
+        sentence = sentences[i]
+        words = [w[0] for w in sentence]
+        print("round" + str(i))
+        p = model.predict(np.array([X_test[i]]))
+        p = np.argmax(p, axis=-1)
+        y_true = np.argmax(y_test[i], axis=-1)
+        # print(p)
+        # print(y_true)
+        # print("{:14}: {}".format("True", "Pred"))
+        # for t, pred in zip(y_true, p[0]):
+        #     print("{:14}: {}".format(tags[t], tags[pred]))
+        print("{:14} ({:5}): {}".format("Word", "True", "Pred"))
+        for w, t, pred in zip(words, y_true, p[0]):
+            print("{:14}: {}, {}".format(w, tags[t], tags[pred]))
 

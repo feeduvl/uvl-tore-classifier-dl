@@ -12,11 +12,9 @@ from new.io_utils import saveContentToFile
 import numpy as np
 
 
-def constructModel(n_words, n_tags, sentence_length):
-    input = Input(shape=(sentence_length,))
-    model = Embedding(input_dim=n_words, output_dim=sentence_length, input_length=sentence_length)(input)
-    model = Dropout(0.1)(model)
-    model = Bidirectional(LSTM(units=100, return_sequences=True, recurrent_dropout=0.1))(model)
+def constructModel(n_tags, sentence_length):
+    input = Input(shape=(sentence_length, 100))
+    model = Bidirectional(LSTM(units=100, return_sequences=True, recurrent_dropout=0.1, input_shape=(sentence_length,100)))(input)
     model = Dropout(0.1)(model)
     model = Bidirectional(LSTM(units=200, return_sequences=True, recurrent_dropout=0.1))(model)
     model = Dropout(0.1)(model)
@@ -39,20 +37,25 @@ def getTags(dataset):
 
 
 def pad_or_truncate(some_list, target_len):
-    return some_list[:target_len] + [np.zeros(3).tolist()]*(target_len - len(some_list))
+    return some_list[:target_len] + [np.zeros(100).tolist()]*(target_len - len(some_list))
 
 
-def getWordEmbeddings(sentences, max_len):
+def getWordEmbeddings(sentences, max_len, save=False):
     model_glove_twitter = api.load("glove-twitter-100")
     X = [[(model_glove_twitter[w[0]].tolist() if (w[0] in model_glove_twitter) else np.zeros(100).tolist()) for w in s] for s in sentences]
-    X = [pad_or_truncate(s, max_len) for s in sentences]
-    saveContentToFile("../data/generated", "embeddings.json", X)
+    X = [pad_or_truncate(s, max_len) for s in X]
+    if save:
+        # TODO: Change back
+        saveContentToFile("../data/generated", "embeddings.json", X)
+        # saveContentToFile("../data/generated/test", "embeddings.json", X)
+    return X
 
 
 def loadWordEmbedding():
+    # TODO: Change back
     f = open("../data/generated" + "/embeddings.json")
+    # f = open("../data/generated/test" + "/embeddings.json")
     return json.load(f)
-
 
 
 def getXAndy(tag2idx, sentences, n_tags, sentence_length):

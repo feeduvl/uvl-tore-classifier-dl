@@ -9,7 +9,6 @@ from new.training_preparation import constructModel, loadWordEmbedding, construc
 
 if __name__ == "__main__":
 
-
     PATH = "../data/train"
     SENTENCE_LENGTH = 60
     f = open(PATH + "/anno.json")
@@ -27,18 +26,17 @@ if __name__ == "__main__":
     y_train = getXAndy(tag2idx, sentences, n_tags, SENTENCE_LENGTH)
 
     # Uncomment first and comment second, when building word embeddings
-    # getWordEmbeddings(sentences, SENTENCE_LENGTH)
-    we = loadWordEmbedding()
+    # getWordEmbeddings(sentences, SENTENCE_LENGTH, True)
+    X_train = loadWordEmbedding()
 
+    model = constructModel(n_tags, SENTENCE_LENGTH)
+    model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+    history = model.fit(np.array(X_train), np.array(y_train), batch_size=32, epochs=25, validation_split=0.1, verbose=1)
 
-    # model = constructModel(n_words, n_tags, SENTENCE_LENGTH)
-    # model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-    # history = model.fit(X_train, np.array(y_train), batch_size=32, epochs=3, validation_split=0.1, verbose=1)
-    #
-    # model.save('../new_model/' + str(SENTENCE_LENGTH) + '/model05_3e.h5')
-    # model.summary()
+    model.save('../emb_model/' + str(SENTENCE_LENGTH) + '/model02_25e.h5')
+    model.summary()
 
-    # plt.plot(history.history['accuracy'], c='b', label='train accuracy')
-    # plt.plot(history.history['val_accuracy'], c='r', label='validation accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
+    plt.plot(history.history['accuracy'], c='b', label='train accuracy')
+    plt.plot(history.history['val_accuracy'], c='r', label='validation accuracy')
+    plt.legend(loc='lower right')
+    plt.show()
