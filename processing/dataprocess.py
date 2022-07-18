@@ -26,10 +26,12 @@ def fillToreCategories(list_of_tokens_with_code, list_of_codes):
                 list_of_tokens_with_code[token]["tag"] = list_of_codes[i]["tore"]
     return list_of_tokens_with_code
 
+
 def filter_tokens(tokens_with_code):
     tokens_with_code = [token for token in tokens_with_code if not token["word"] in stopwords.words('english')]
     tokens_with_code = [token for token in tokens_with_code if not re.sub(r"[^a-zA-Z0-9 ]", "", token["word"]) == ""]
     return tokens_with_code
+
 
 def constructFeatureVector(data_vector):
     all_tokens = data_vector["tokens"]
@@ -50,6 +52,7 @@ def constructDocuments(feature_vecs, all_docs):
     return documents
 
 
+# The reddit-crawler uses '###' as a separator, so sentences have to be separated by that as well
 def getSentencesForDocument(documents):
     sentencesounter = 0
     sentences = []
@@ -73,7 +76,8 @@ def getSentencesForDocument(documents):
             sentences.append(document[i])
     return sentences
 
-def buildDataset(data):
+
+def buildDataset(data, filterDataset=False):
     all_docs = data["docs"]
 
     feature_vectors = constructFeatureVector(data)
@@ -81,5 +85,8 @@ def buildDataset(data):
     docs = constructDocuments(feature_vectors, all_docs)
     # Sentences are not only separated by normal sentence separators, but also by '###'
     ds = getSentencesForDocument(docs)
+
+    if filterDataset:
+        ds = filter_tokens(ds)
 
     return pd.DataFrame(ds)

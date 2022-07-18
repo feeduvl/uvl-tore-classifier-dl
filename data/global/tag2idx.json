@@ -1,0 +1,16 @@
+{
+  "None": 0,
+  "Stakeholder": 1,
+  "Goals": 2,
+  "Task": 3,
+  "Activity": 4,
+  "Domain Data": 5,
+  "Interaction": 6,
+  "System Function": 7,
+  "Interaction Data": 8,
+  "Workspace": 9,
+  "Internal Action": 10,
+  "Internal Data": 11,
+  "Software": 12,
+  "_": 13
+}
