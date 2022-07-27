@@ -22,13 +22,13 @@ def classify_tore():
 
     app.logger.info(f'Create settings: {create}, {type(create)}')
 
-    annotation_handler = AnnotationHandler(annotation_name, dataset_name, app.logger)
-    request_handler = RequestHandler(app.logger, annotation_handler)
-    codes = request_handler.process(documents, create)
-
-    result = dict()
-    result.update({"codes": codes})
-    return jsonify(result)
+    # annotation_handler = AnnotationHandler(annotation_name, dataset_name, app.logger)
+    # request_handler = RequestHandler(app.logger, annotation_handler)
+    # codes = request_handler.process(documents, create)
+    #
+    # result = dict()
+    # result.update({"codes": codes})
+    # return jsonify(result)
 
 @app.route('/hitec/classify/concepts/bi-lstm-classifier/status', methods=["GET"])
 def get_status():
