@@ -27,7 +27,8 @@ def constructModel(n_tags, sentence_length):
 def getTagMap():
     cwd = os.getcwd()
     print(cwd)
-    f = open("../data/global" + "/tag2idx.json")
+    # f = open("../data/global" + "/tag2idx.json")
+    f = open("data/global" + "/tag2idx.json")
     return json.load(f)
 
 
