@@ -1,5 +1,5 @@
 import numpy as np
-from nltk import pos_tag
+from nltk import pos_tag, download
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 
@@ -7,6 +7,13 @@ import tensorflow as tf
 
 from nltk.tokenize import word_tokenize, sent_tokenize
 from processing.training_preparation import getTagMap, getWordEmbeddingsForPrediction
+
+
+def do_nltk_downloads():
+    download('punkt')
+    download('averaged_perceptron_tagger')
+    download("wordnet")
+    download('omw-1.4')
 
 
 def get_wordnet_pos(treebank_tag):
@@ -22,6 +29,7 @@ def get_wordnet_pos(treebank_tag):
 
 
 def getWordLemmas(documents):
+    do_nltk_downloads()
     all_lemmas = []
     lemmatizer = WordNetLemmatizer()
 
