@@ -2,6 +2,7 @@ import datetime
 
 from flask import Flask, request, json, jsonify
 
+from src.annotation_handler import createNewAnnotation
 from src.flask_setup import app
 from src.predict import classifyDataset
 
@@ -22,8 +23,8 @@ def classify_tore():
     app.logger.info(f'Create settings: {create}, {type(create)}')
 
     codes = classifyDataset(documents)
-    # if create:
-    #     createNewAnnotation(dataset_name, annotation_name, codes, app.logger)
+    if create:
+        createNewAnnotation(dataset_name, annotation_name, codes, app.logger)
 
     result = dict()
     result.update({"codes": codes})
