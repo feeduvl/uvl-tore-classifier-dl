@@ -1,4 +1,5 @@
 import json
+import os
 
 from tensorflow.keras.layers import LSTM, Dense, TimeDistributed, Dropout, Bidirectional
 from tensorflow.python.keras import Model, Input
@@ -24,6 +25,8 @@ def constructModel(n_tags, sentence_length):
 
 
 def getTagMap():
+    cwd = os.getcwd()
+    print(cwd)
     f = open("../data/global" + "/tag2idx.json")
     return json.load(f)
 
