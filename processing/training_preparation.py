@@ -9,7 +9,7 @@ from keras.utils import to_categorical
 import gensim.downloader as api
 from os.path import exists
 
-from io_utils import saveContentToFile
+from processing.io_utils import saveContentToFile
 import numpy as np
 
 
