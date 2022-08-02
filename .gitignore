@@ -8,3 +8,4 @@ models/
 *.txt
 graphs/
 generated/
+/tmp

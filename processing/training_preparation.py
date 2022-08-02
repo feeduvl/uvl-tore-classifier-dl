@@ -63,6 +63,24 @@ def getWordEmbeddings(sentences, sen_len, isTest=False, dataset_filtered=False):
         return X
 
 
+def getWordEmbeddingsForPrediction(sentences, sen_len):
+
+    print("Calculating word embeddings, this might take a while")
+    model_glove_twitter = api.load("glove-twitter-100")
+
+    X = [[(model_glove_twitter[w].tolist() if (w in model_glove_twitter) else np.zeros(100).tolist()) for w in s] for s in sentences]
+    X = [pad_or_truncate(s, sen_len) for s in X]
+
+    # saveContentToFile("../tmp/", "we.json", X)
+
+    return X
+
+
+# def getWordEmbeddingsForPrediction():
+#     f = open("../tmp/we.json")
+#     return json.load(f)
+
+
 def getOneHotEncoding(tag2idx, sentences, n_tags, sentence_length):
     y = [[tag2idx[w[1]] for w in s] for s in sentences]
     y = pad_sequences(maxlen=sentence_length, sequences=y, padding="post", value=tag2idx["_"])

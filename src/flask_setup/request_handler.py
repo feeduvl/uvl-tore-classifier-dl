@@ -1,6 +1,4 @@
 #
-# from src.classifier.classifier import Classifier
-#
 # class RequestHandler:
 #
 #     def __init__(self, logger, annotation_handler) -> None:
@@ -9,6 +7,9 @@
 #
 #     def process(self, documents, create = False):
 #         self.logger.info(f'Start classification of dataset')
+#
+#
+#
 #
 #         annotated_docs = []
 #         classifier = Classifier()
@@ -27,6 +28,5 @@
 #             self.annotation_handler.generate_codes(annotated_docs)
 #
 #         return self.annotation_handler.get_codes()
-#
 #
 #
