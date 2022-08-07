@@ -60,33 +60,34 @@ def predictCategories(model, X_test, all_lemmas, tag2idx):
     return all_tags
 
 
-def flattenNestedList(nestedList):
-    return [item for sublist in nestedList for item in sublist]
-
-
 def createCodes(all_lemmas, all_tags):
+    index = 0
     code_index = 0
     codes = []
 
-    for index, lemma in enumerate(all_lemmas):
-        if (all_tags[index] != "None") and (all_tags[index] != "_"):
-            # create code and append to list of codes
-            code = {
-                "tokens": [
-                    index
-                ],
-                "name": lemma,
-                "tore": all_tags[index],
-                "index": code_index,
-                "relationship_memberships": []
-            }
+    for j in range(len(all_lemmas)):
+        for i, lemma in enumerate(all_lemmas[j]):
+            # This is needed if the sentence is longer than 8ß
+            if i < 80:
+                if (all_tags[j][i] != "None") and (all_tags[j][i] != "_"):
+                    # create code and append to list of codes
+                    code = {
+                        "tokens": [
+                            index
+                        ],
+                        "name": lemma,
+                        "tore": all_tags[j][i],
+                        "index": code_index,
+                        "relationship_memberships": []
+                    }
 
-            codes.append(code)
-            code_index += 1
+                    codes.append(code)
+                    code_index += 1
+            index += 1
     return codes
 
 
-def classifyDataset(documents, logger, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model_2layers_50e_unfiltered.h5"):
+def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="../model/80/model_2layers_50e_unfiltered.h5"):
 
     all_lemmas = getWordLemmas(documents)
 
@@ -95,13 +96,5 @@ def classifyDataset(documents, logger, SENTENCE_LENGTH=80, MODEL_PATH="model/80/
 
     model = tf.keras.models.load_model(MODEL_PATH)
     all_tags = predictCategories(model, X_test, all_lemmas, tag2idx)
-
-    all_tags = flattenNestedList(all_tags)
-    all_lemmas = flattenNestedList(all_lemmas)
-
-    logger.info('Length all_lemmas: ' + str(len(all_lemmas)))
-    logger.info('all_lemmas: ' + str(all_lemmas))
-    logger.info('Length all_tags: ' + str(len(all_tags)))
-    logger.info('all_tags: ' + str(all_tags))
 
     return createCodes(all_lemmas, all_tags)
