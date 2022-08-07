@@ -87,7 +87,7 @@ def createCodes(all_lemmas, all_tags):
     return codes
 
 
-def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="../model/80/model_2layers_50e_unfiltered.h5"):
+def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model_2layers_50e_unfiltered.h5"):
 
     all_lemmas = getWordLemmas(documents)
 
