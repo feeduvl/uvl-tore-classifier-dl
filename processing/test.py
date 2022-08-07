@@ -29,7 +29,7 @@ if __name__ == "__main__":
     sentences = getter.sentences
     print("Number of sentences: ", len(sentences))
 
-    tag2idx = getTagMap()
+    tag2idx = getTagMap(True)
     n_tags = len(tag2idx)
     y_test = getOneHotEncoding(tag2idx, sentences, n_tags, SENTENCE_LENGTH)
     X_test = getWordEmbeddings(sentences, SENTENCE_LENGTH, True)

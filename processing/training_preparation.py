@@ -24,11 +24,11 @@ def constructModel(n_tags, sentence_length):
     return Model(input, out)
 
 
-def getTagMap():
-    cwd = os.getcwd()
-    print(cwd)
-    # f = open("../data/global" + "/tag2idx.json")
-    f = open("data/global" + "/tag2idx.json")
+def getTagMap(isLocal=False):
+    if isLocal:
+        f = open("../data/global" + "/tag2idx.json")
+    else:
+        f = open("data/global" + "/tag2idx.json")
     return json.load(f)
 
 
@@ -75,14 +75,7 @@ def getWordEmbeddingsForPrediction(sentences, sen_len):
     X = [[(model_glove_twitter[w].tolist() if (w in model_glove_twitter) else np.zeros(100).tolist()) for w in s] for s in sentences]
     X = [pad_or_truncate(s, sen_len) for s in X]
 
-    # saveContentToFile("../tmp/", "we.json", X)
-
     return X
-
-
-# def getWordEmbeddingsForPrediction():
-#     f = open("../tmp/we.json")
-#     return json.load(f)
 
 
 def getOneHotEncoding(tag2idx, sentences, n_tags, sentence_length):

@@ -22,7 +22,7 @@ def classify_tore():
 
     app.logger.info(f'Create settings: {create}, {type(create)}')
 
-    codes = classifyDataset(documents)
+    codes = classifyDataset(documents, app.logger)
     if create:
         createNewAnnotation(dataset_name, annotation_name, codes, app.logger)
 

@@ -86,7 +86,7 @@ def createCodes(all_lemmas, all_tags):
     return codes
 
 
-def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model_2layers_50e_unfiltered.h5"):
+def classifyDataset(documents, logger, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model_2layers_50e_unfiltered.h5"):
 
     all_lemmas = getWordLemmas(documents)
 
@@ -98,5 +98,10 @@ def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model_2l
 
     all_tags = flattenNestedList(all_tags)
     all_lemmas = flattenNestedList(all_lemmas)
+
+    logger.info('Length all_lemmas: ' + str(len(all_lemmas)))
+    logger.info('all_lemmas: ' + str(all_lemmas))
+    logger.info('Length all_tags: ' + str(len(all_tags)))
+    logger.info('all_tags: ' + str(all_tags))
 
     return createCodes(all_lemmas, all_tags)
