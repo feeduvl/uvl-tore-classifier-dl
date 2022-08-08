@@ -2,9 +2,8 @@ import argparse
 import json
 
 import numpy as np
-from sklearn.metrics import classification_report, accuracy_score
-
 import tensorflow as tf
+from sklearn.metrics import classification_report, accuracy_score
 
 from SentenceGetter import SentenceGetter
 from calculate_stats import calculatePresRecall
@@ -16,7 +15,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--sentence_length', type=int, default=80, help='the sentence length')
     parser.add_argument('--path', default="../data/test", help='the path to the training dataset')
-    parser.add_argument('--path_to_model', default="../model/80/model_2layers_50e_unfiltered.h5", help='the path to the currently used model')
+    parser.add_argument('--path_to_model', default="../model/model.h5", help='the path to the currently used model')
     args = parser.parse_args()
 
     PATH = args.path

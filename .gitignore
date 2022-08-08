@@ -4,7 +4,6 @@
 rest_test.http
 .vscode/*
 sentistrength/SentiStrength.jar
-models/
 *.txt
 graphs/
 generated/

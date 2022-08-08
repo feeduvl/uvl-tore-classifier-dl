@@ -1,11 +1,10 @@
 import numpy as np
-from nltk import pos_tag, download
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
-
 import tensorflow as tf
-
+from nltk import pos_tag, download
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize, sent_tokenize
+
 from processing.training_preparation import getTagMap, getWordEmbeddingsForPrediction
 
 
@@ -87,7 +86,7 @@ def createCodes(all_lemmas, all_tags):
     return codes
 
 
-def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model_2layers_50e_unfiltered.h5"):
+def classifyDataset(documents, SENTENCE_LENGTH=80, MODEL_PATH="model/80/model.h5"):
 
     all_lemmas = getWordLemmas(documents)
 

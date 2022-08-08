@@ -14,7 +14,7 @@ def saveContentToFile(path, file, content):
 
 
 def getPathToFile(sen_len, num_ep, filter_ds=False):
-    model_dir = '../model/' + str(sen_len)
+    model_dir = '../models/' + str(sen_len)
     if filter_ds:
         model_filename = '/model_2layers_' + str(num_ep) + 'e_filtered'
     else:
