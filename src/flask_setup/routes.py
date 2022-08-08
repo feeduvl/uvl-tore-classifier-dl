@@ -1,6 +1,4 @@
-import datetime
-
-from flask import Flask, request, json, jsonify
+from flask import request, json, jsonify
 
 from src.annotation_handler import createNewAnnotation
 from src.flask_setup import app

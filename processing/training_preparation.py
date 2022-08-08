@@ -1,17 +1,14 @@
 import json
-import os
+from os.path import exists
 
+import gensim.downloader as api
+import numpy as np
+from keras.preprocessing.sequence import pad_sequences
+from keras.utils import to_categorical
 from tensorflow.keras.layers import LSTM, Dense, TimeDistributed, Dropout, Bidirectional
 from tensorflow.python.keras import Model, Input
 
-from keras.preprocessing.sequence import pad_sequences
-from keras.utils import to_categorical
-
-import gensim.downloader as api
-from os.path import exists
-
 from processing.io_utils import saveContentToFile
-import numpy as np
 
 
 def constructModel(n_tags, sentence_length):
